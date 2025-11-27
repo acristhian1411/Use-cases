@@ -1,0 +1,21 @@
+# Task List - Manual Testing Flow App
+
+- [/] Project Initialization <!-- id: 0 -->
+    - [x] Initialize SvelteKit project <!-- id: 1 -->
+    - [x] Install TailwindCSS <!-- id: 2 -->
+    - [x] Setup Drizzle ORM & SQLite <!-- id: 3 -->
+    - [x] Configure Database Schema (Modules, TestCases, Steps, Actors) <!-- id: 4 -->
+- [/] Backend Implementation <!-- id: 5 -->
+    - [ ] Create database migration script <!-- id: 6 -->
+    - [x] Implement repository/service layer for Modules <!-- id: 7 -->
+    - [x] Implement repository/service layer for Test Cases <!-- id: 8 -->
+- [x] Frontend Implementation <!-- id: 9 -->
+    - [x] Design Layout & Navigation <!-- id: 10 -->
+    - [x] Implement Module Management (List, Create, Edit, Delete) <!-- id: 11 -->
+    - [x] Implement Test Case Management (List, Create, Edit, Delete) <!-- id: 12 -->
+    - [x] Implement Test Step Editor (Dynamic add/remove steps) <!-- id: 13 -->
+    - [x] Implement Actor Management <!-- id: 14 -->
+- [x] Verification <!-- id: 15 -->
+    - [x] Verify Module CRUD <!-- id: 16 -->
+    - [x] Verify Test Case Flow <!-- id: 17 -->
+    - [x] Final UI Polish <!-- id: 18 -->
