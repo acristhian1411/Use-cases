@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  use_cases:
+    build: .
+    container_name: use_cases
+    ports:
+      - "81:3000" # Puerto externo → interno
+    restart: always
+    volumes:
+      - ./sqlite.db:/app/sqlite.db # Monta el archivo DB
+    environment:
+      - DATABASE_URL=file:/app/sqlite.db
+      - ORIGIN=http://localhost:81
