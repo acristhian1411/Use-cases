@@ -24,3 +24,5 @@ vite.config.ts.timestamp-*
 # Docker
 # docker*
 
+graphify-out
+
