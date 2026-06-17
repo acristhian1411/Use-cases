@@ -1,7 +1,8 @@
 <script>
   import "../app.css";
+  import { goto } from "$app/navigation";
   import { page } from "$app/stores";
-  import { BookOpen, FlaskConical, Home, Settings } from "lucide-svelte";
+  import { BookOpen, FlaskConical, Home, LogOut } from "lucide-svelte";
 
   let { children } = $props();
 
@@ -9,8 +10,15 @@
     { href: "/", label: "Home", icon: Home },
     { href: "/modules", label: "Modules", icon: BookOpen },
     { href: "/tests", label: "Test Cases", icon: FlaskConical },
-    // { href: '/settings', label: 'Settings', icon: Settings }
   ];
+
+  function logout() {
+    document.cookie = "auth_token=; Path=/; Max-Age=0; SameSite=Lax";
+    document.cookie = "auth_user=; Path=/; Max-Age=0; SameSite=Lax";
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("auth_user");
+    goto("/login", { replaceState: true });
+  }
 </script>
 
 <div
@@ -56,7 +64,16 @@
       {/each}
     </nav>
 
-    <div class="p-4 border-t border-slate-800/50">
+    <div class="p-4 border-t border-slate-800/50 space-y-2">
+      <button
+        type="button"
+        onclick={logout}
+        class="flex w-full items-center gap-3 rounded-xl border border-slate-800 bg-slate-800/30 px-4 py-3 text-sm text-slate-200 transition hover:bg-slate-800 hover:text-white"
+      >
+        <LogOut size={18} class="text-slate-400" />
+        <span>Logout</span>
+      </button>
+
       <div
         class="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800/30 border border-slate-800"
       >

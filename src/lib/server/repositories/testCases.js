@@ -26,6 +26,18 @@ export const testCaseRepository = {
   /**
    * @param {Object} data
    */
+  /**
+   * @param {{
+   *   title: string,
+   *   description?: string | null,
+   *   moduleId?: number | null,
+   *   preconditions?: string | null,
+   *   postconditions?: string | null,
+   *   expectedResult?: string | null,
+   *   steps?: Array<any>,
+   *   actors?: Array<any>
+   * }} data
+   */
   create: async (data) => {
     const { steps, actors, ...testCaseData } = data;
     
@@ -47,6 +59,19 @@ export const testCaseRepository = {
   /**
    * @param {number} id
    * @param {Object} testCaseData
+   */
+  /**
+   * @param {number} id
+   * @param {{
+   *   title?: string,
+   *   description?: string | null,
+   *   moduleId?: number | null,
+   *   preconditions?: string | null,
+   *   postconditions?: string | null,
+   *   expectedResult?: string | null,
+   *   steps?: Array<any>,
+   *   actors?: Array<any>
+   * }} testCaseData
    */
   update: async (id, testCaseData) => {
     const { steps, actors, ...rest } = testCaseData;

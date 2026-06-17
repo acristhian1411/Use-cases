@@ -9,6 +9,11 @@ services:
     restart: always
     volumes:
       - ./sqlite.db:/app/sqlite.db # Monta el archivo DB
+    extra_hosts:
+      - "auth.test:host-gateway"
+    env_file:
+      - ./.env
     environment:
       - DATABASE_URL=file:/app/sqlite.db
       - ORIGIN=http://localhost:81
+      - NODE_TLS_REJECT_UNAUTHORIZED=0

@@ -1,5 +1,13 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
+export const users = sqliteTable('users', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  name: text('name', { length: 100 }).notNull(),
+  email: text('email', { length: 150 }).notNull().unique(),
+  passwordHash: text('password_hash', { length: 255 }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull()
+});
+
 export const modules = sqliteTable('modules', {
   id: integer('id').primaryKey(),
   name: text('name', { length: 100 }).notNull(),

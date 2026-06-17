@@ -1,0 +1,5 @@
+AUTH_CLIENT_ID=client_id
+AUTH_CLIENT_SECRET=client_secret
+AUTH_BASE_URL=https://localhost:3000
+AUTH_TOKEN_URL=https://localhost:3000/oauth/token
+AUTH_USERINFO_URL=https://localhost:3000/api/user
