@@ -20,6 +20,7 @@ export const actions = {
     const preconditions = /** @type {string} */ (data.get('preconditions'));
     const postconditions = /** @type {string} */ (data.get('postconditions'));
     const expectedResult = /** @type {string} */ (data.get('expectedResult'));
+    const status = /** @type {string} */ (data.get('status')) || 'untested';
     
     const stepsJson = /** @type {string} */ (data.get('steps'));
     const actorsJson = /** @type {string} */ (data.get('actors'));
@@ -38,6 +39,7 @@ export const actions = {
       preconditions,
       postconditions,
       expectedResult,
+      status,
       steps,
       actors
     });

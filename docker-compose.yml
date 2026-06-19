@@ -2,7 +2,10 @@ version: "3.9"
 
 services:
   use_cases:
-    build: .
+    build:
+      context: .
+      args:
+        CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-http://localhost:81,http://127.0.0.1:81,http://192.168.0.14:81}
     container_name: use_cases
     ports:
       - "81:3000" # Puerto externo → interno
@@ -15,5 +18,5 @@ services:
       - ./.env
     environment:
       - DATABASE_URL=file:/app/sqlite.db
-      - ORIGIN=http://localhost:81
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS:-http://localhost:81,http://127.0.0.1:81,http://192.168.0.14:81}
       - NODE_TLS_REJECT_UNAUTHORIZED=0

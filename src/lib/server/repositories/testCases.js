@@ -3,6 +3,10 @@ import { testCases, testSteps, testCaseActors } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
 
 export const testCaseRepository = {
+  getAll: async () => {
+    return await db.select().from(testCases).all();
+  },
+
   /**
    * @param {number} moduleId
    */
@@ -34,6 +38,7 @@ export const testCaseRepository = {
    *   preconditions?: string | null,
    *   postconditions?: string | null,
    *   expectedResult?: string | null,
+   *   status?: string,
    *   steps?: Array<any>,
    *   actors?: Array<any>
    * }} data
@@ -69,6 +74,7 @@ export const testCaseRepository = {
    *   preconditions?: string | null,
    *   postconditions?: string | null,
    *   expectedResult?: string | null,
+   *   status?: string,
    *   steps?: Array<any>,
    *   actors?: Array<any>
    * }} testCaseData

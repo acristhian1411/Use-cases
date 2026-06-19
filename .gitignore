@@ -25,4 +25,5 @@ vite.config.ts.timestamp-*
 # docker*
 
 graphify-out
-
+docs
+sqlite.db

@@ -21,7 +21,20 @@ export const testCases = sqliteTable('test_cases', {
   moduleId: integer('module_id').references(() => modules.id),
   preconditions: text('preconditions'),
   postconditions: text('postconditions'),
-  expectedResult: text('expected_result')
+  expectedResult: text('expected_result'),
+  status: text('status', { length: 20 }).default('untested').notNull()
+});
+
+export const bugs = sqliteTable('bugs', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  title: text('title', { length: 150 }).notNull(),
+  description: text('description').notNull(),
+  severity: text('severity', { length: 20 }).notNull(),
+  status: text('status', { length: 20 }).default('open').notNull(),
+  testCaseId: integer('test_case_id').references(() => testCases.id),
+  testStepId: integer('test_step_id').references(() => testSteps.id),
+  reportedById: integer('reported_by_id').references(() => users.id),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull()
 });
 
 export const testSteps = sqliteTable('test_steps', {
