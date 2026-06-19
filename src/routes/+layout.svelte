@@ -3,6 +3,8 @@
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import { BookOpen, FlaskConical, Home, LogOut } from "lucide-svelte";
+  import { authUserStore, clearAuthUser } from "$lib/stores/auth.js";
+  import { onMount } from "svelte";
 
   let { children } = $props();
 
@@ -12,12 +14,52 @@
     { href: "/tests", label: "Test Cases", icon: FlaskConical },
   ];
 
+  onMount(() => {
+    // Check if user is authenticated on mount
+    if (!$authUserStore) {
+      goto("/login", { replaceState: true });
+    }
+  });
+
   function logout() {
     document.cookie = "auth_token=; Path=/; Max-Age=0; SameSite=Lax";
     document.cookie = "auth_user=; Path=/; Max-Age=0; SameSite=Lax";
     localStorage.removeItem("auth_token");
-    localStorage.removeItem("auth_user");
+    clearAuthUser();
     goto("/login", { replaceState: true });
+  }
+
+  /**
+   * @param {Record<string, unknown> | null} user
+   */
+  function getDisplayName(user) {
+    if (!user) {
+      return "Tester";
+    }
+
+    if (typeof user.name === "string" && user.name.trim()) {
+      return user.name;
+    }
+
+    if (typeof user.email === "string" && user.email.trim()) {
+      return user.email;
+    }
+
+    return "Tester";
+  }
+
+  /**
+   * @param {Record<string, unknown> | null} user
+   */
+  function getInitials(user) {
+    const name = getDisplayName(user);
+    const parts = name.split(/\s+/).filter(Boolean);
+
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+    }
+
+    return name.slice(0, 2).toUpperCase();
   }
 </script>
 
@@ -80,11 +122,15 @@
         <div
           class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-xs font-bold text-white"
         >
-          QA
+          {$authUserStore ? getInitials($authUserStore) : "QA"}
         </div>
         <div class="flex-1 min-w-0">
-          <p class="text-sm font-medium text-slate-200 truncate">Tester</p>
-          <p class="text-xs text-slate-500 truncate">Logged In</p>
+          <p class="text-sm font-medium text-slate-200 truncate">
+            {$authUserStore ? getDisplayName($authUserStore) : "Tester"}
+          </p>
+          <p class="text-xs text-slate-500 truncate">
+            {$authUserStore ? "Logged In" : "No session"}
+          </p>
         </div>
       </div>
     </div>

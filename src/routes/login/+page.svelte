@@ -1,6 +1,7 @@
 <script>
   import { goto } from "$app/navigation";
   import { login, getCurrentUser } from "$lib/authClient.js";
+  import { setAuthUser } from "$lib/stores/auth.js";
 
   let email = "";
   let password = "";
@@ -24,9 +25,10 @@
     try {
       const data = await login(email, password);
       const me = await getCurrentUser(data.access_token);
-      persistSession(data.access_token, me.user || {});
+      const user = me.user || {};
+      persistSession(data.access_token, user);
       localStorage.setItem("auth_token", data.access_token);
-      localStorage.setItem("auth_user", JSON.stringify(me.user || {}));
+      setAuthUser(user);
       await goto("/modules");
     } catch (err) {
       error = err instanceof Error ? err.message : "No se pudo iniciar sesión";
