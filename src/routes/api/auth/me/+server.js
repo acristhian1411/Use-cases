@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { getUserFromToken } from '$lib/server/externalAuth.js';
+import { userRepository } from '$lib/server/repositories/users.js';
 
 /**
  * @param {string | null} authorizationHeader
@@ -25,6 +26,18 @@ export async function GET({ request }) {
 
   try {
     const user = await getUserFromToken(token);
+
+    if (user && user.email) {
+      const existing = await userRepository.getByEmail(user.email);
+      if (!existing) {
+        await userRepository.create({
+          name: user.name || 'User',
+          email: user.email,
+          passwordHash: ''
+        });
+      }
+    }
+
     return json({ user }, { status: 200 });
   } catch (error) {
     const err = /** @type {{ status?: number, message?: string }} */ (error);
@@ -32,3 +45,4 @@ export async function GET({ request }) {
     return json({ error: err.message || 'Unauthorized' }, { status });
   }
 }
+
