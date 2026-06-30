@@ -20,3 +20,24 @@ services:
       - DATABASE_URL=file:/app/sqlite.db
       - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS:-http://localhost:81,http://127.0.0.1:81,http://192.168.0.14:81}
       - NODE_TLS_REJECT_UNAUTHORIZED=0
+
+  use_cases_dev:
+    build:
+      context: .
+      target: dev
+    container_name: use_cases_dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./sqlite.db:/app/sqlite.db
+    extra_hosts:
+      - "auth.test:host-gateway"
+    env_file:
+      - ./.env
+    environment:
+      - DATABASE_URL=file:/app/sqlite.db
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - CHOKIDAR_USEPOLLING=true
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
