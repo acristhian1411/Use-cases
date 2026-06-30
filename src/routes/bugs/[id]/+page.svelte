@@ -1,6 +1,7 @@
 <script>
   import { ArrowLeft, Save, Trash2 } from "lucide-svelte";
   import { enhance } from "$app/forms";
+  import Comments from "$lib/components/Comments.svelte";
 
   let { data } = $props();
 </script>
@@ -108,4 +109,5 @@
       </button>
     </div>
   </form>
+  <Comments refId={data.bug.id} refTable="bugs" />
 </div>

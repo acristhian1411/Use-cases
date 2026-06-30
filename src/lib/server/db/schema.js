@@ -51,3 +51,13 @@ export const testCaseActors = sqliteTable('test_case_actors', {
   testCaseId: integer('test_case_id').references(() => testCases.id),
   actorName: text('actor_name', { length: 100 }).notNull()
 });
+
+export const comments = sqliteTable('comments', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  content: text('content').notNull(),
+  userId: integer('user_id').references(() => users.id),
+  refTable: text('ref_table', { length: 100 }).notNull(),
+  refId: integer('ref_id').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull()
+});
+

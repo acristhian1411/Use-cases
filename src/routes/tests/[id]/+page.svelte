@@ -1,6 +1,7 @@
 <script>
   import { ArrowLeft, Save, Plus, Trash2, GripVertical } from "lucide-svelte";
   import { enhance } from "$app/forms";
+  import Comments from "$lib/components/Comments.svelte";
 
   /** @type {{ data: { testCase: { id: number, title: string, description: string, moduleId: number, preconditions: string, postconditions: string, expectedResult: string, status?: string, steps: Array<any>, actors: Array<any> }, modules: Array<{ id: number, name: string }> } }} */
   let { data } = $props();
@@ -334,4 +335,5 @@
       </button>
     </div>
   </form>
+  <Comments refId={data.testCase.id} refTable="test_cases" />
 </div>

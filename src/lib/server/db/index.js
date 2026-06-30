@@ -38,6 +38,21 @@ async function initializeDatabase() {
     console.warn('Failed to initialize bugs table:', error);
   }
 
+ 
+
+  try {
+    await db.run(sql`CREATE TABLE IF NOT EXISTS comments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      content TEXT NOT NULL,
+      user_id INTEGER REFERENCES users(id),
+      ref_table TEXT NOT NULL,
+      ref_id INTEGER NOT NULL,
+      created_at INTEGER NOT NULL
+    )`);
+  } catch (error) {
+    console.warn('Failed to initialize comments table:', error);
+  }
+
   try {
     await db.run(sql`ALTER TABLE test_cases ADD COLUMN status TEXT NOT NULL DEFAULT 'untested'`);
   } catch (error) {
