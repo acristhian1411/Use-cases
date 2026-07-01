@@ -2,6 +2,7 @@
   import { ArrowLeft, Save, Plus, Trash2, GripVertical } from "lucide-svelte";
   import { enhance } from "$app/forms";
   import Comments from "$lib/components/Comments.svelte";
+  import AuditTrail from "$lib/components/AuditTrail.svelte";
 
   /** @type {{ data: { testCase: { id: number, title: string, description: string, moduleId: number, preconditions: string, postconditions: string, expectedResult: string, status?: string, steps: Array<any>, actors: Array<any> }, modules: Array<{ id: number, name: string }> } }} */
   let { data } = $props();
@@ -335,5 +336,6 @@
       </button>
     </div>
   </form>
+  <AuditTrail refId={data.testCase.id} refTable="test_cases" />
   <Comments refId={data.testCase.id} refTable="test_cases" />
 </div>

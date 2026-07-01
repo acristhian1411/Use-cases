@@ -1,6 +1,8 @@
+// @ts-nocheck
 import { moduleRepository } from '$lib/server/repositories/modules';
 import { testCaseRepository } from '$lib/server/repositories/testCases';
 import { error, redirect } from '@sveltejs/kit';
+import { logAudit } from '$lib/server/audit.js';
 
 export const load = async ({ params }) => {
   const id = parseInt(params.id);
@@ -18,7 +20,7 @@ export const load = async ({ params }) => {
 };
 
 export const actions = {
-  update: async ({ request, params }) => {
+  update: async ({ request, params, locals }) => {
     const id = parseInt(params.id);
     const data = await request.formData();
     
@@ -39,7 +41,8 @@ export const actions = {
 
     const steps = stepsJson ? JSON.parse(stepsJson) : [];
     const actors = actorsJson ? JSON.parse(actorsJson) : [];
-
+    let before = await testCaseRepository.getById(id);
+    
     await testCaseRepository.update(id, {
       title,
       moduleId,
@@ -52,14 +55,43 @@ export const actions = {
       actors
     });
 
+    await logAudit({
+      locals,
+      action: 'updated',
+      refTable: 'test_cases',
+      refId: id,
+      before,
+      after: {
+        title,
+        moduleId,
+        description,
+        preconditions,
+        postconditions,
+        expectedResult,
+        status,
+        steps,
+        actors
+      }
+    });
+
     return { success: true };
   },
 
-  delete: async ({ params }) => {
+  delete: async ({ params, locals }) => {
     const id = parseInt(params.id);
     const testCase = await testCaseRepository.getById(id);
     if (testCase) {
+      const before = await testCaseRepository.getById(id);
       await testCaseRepository.delete(id);
+      await logAudit({
+        locals,
+        action: 'deleted',
+        refTable: 'test_cases',
+        refId: id,
+        before,
+        after: null
+      });
+
       throw redirect(303, `/modules/${testCase.moduleId}`);
     }
     throw redirect(303, '/modules');

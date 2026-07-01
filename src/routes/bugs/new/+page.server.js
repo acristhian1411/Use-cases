@@ -2,6 +2,7 @@ import { moduleRepository } from '$lib/server/repositories/modules';
 import { testCaseRepository } from '$lib/server/repositories/testCases';
 import { bugRepository } from '$lib/server/repositories/bugs';
 import { redirect } from '@sveltejs/kit';
+import { logAudit } from '$lib/server/audit.js';
 
 export const load = async ({ url }) => {
   const modules = await moduleRepository.getAll();
@@ -18,7 +19,7 @@ export const load = async ({ url }) => {
 };
 
 export const actions = {
-  default: async ({ request }) => {
+  default: async ({ request, locals }) => {
     const data = await request.formData();
     const title = /** @type {string} */ (data.get('title'));
     const description = /** @type {string} */ (data.get('description'));
@@ -30,13 +31,28 @@ export const actions = {
       return { success: false, error: 'Title and description are required' };
     }
 
-    await bugRepository.create({
+    const bug = await bugRepository.create({
       title,
       description,
       severity,
       status,
       testCaseId,
       createdAt: new Date()
+    });
+
+    await logAudit({
+      locals,
+      action: 'created',
+      refTable: 'bugs',
+      refId: bug.id,
+      before: null,
+      after: {
+        title,
+        description,
+        severity,
+        status,
+        testCaseId
+      }
     });
 
     throw redirect(303, '/bugs');

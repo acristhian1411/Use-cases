@@ -61,3 +61,12 @@ export const comments = sqliteTable('comments', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull()
 });
 
+export const audits = sqliteTable('audits', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  action: text('action', { length: 100 }).notNull(),
+  userId: integer('user_id').references(() => users.id),
+  refTable: text('ref_table', { length: 100 }).notNull(),
+  refId: integer('ref_id').notNull(),
+  details: text('details'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull()
+});

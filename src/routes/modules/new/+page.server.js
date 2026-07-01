@@ -1,8 +1,9 @@
 import { moduleRepository } from '$lib/server/repositories/modules';
 import { redirect } from '@sveltejs/kit';
+import { logAudit } from '$lib/server/audit.js';
 
 export const actions = {
-  default: async ({ request }) => {
+  default: async ({ request, locals }) => {
     const data = await request.formData();
     const rawName = data.get('name');
     const rawDescription = data.get('description');
@@ -13,7 +14,15 @@ export const actions = {
       return { success: false, error: 'Name is required' };
     }
 
-    await moduleRepository.create({ name, description });
+    const module = await moduleRepository.create({ name, description });
+
+    await logAudit({
+      locals,
+      action: 'created',
+      refTable: 'modules',
+      refId: module.id
+    });
+
     throw redirect(303, '/modules');
   }
 };

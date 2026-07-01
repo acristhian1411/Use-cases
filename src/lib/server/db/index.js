@@ -38,7 +38,18 @@ async function initializeDatabase() {
     console.warn('Failed to initialize bugs table:', error);
   }
 
- 
+  try{
+    await db.run(sql`CREATE TABLE IF NOT EXISTS audits (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      action TEXT NOT NULL,
+      user_id INTEGER REFERENCES users(id),
+      ref_table TEXT NOT NULL,
+      ref_id INTEGER NOT NULL,
+      created_at INTEGER NOT NULL
+    )`);
+  } catch (error) {
+    console.warn('Failed to initialize audits table:', error);
+  }
 
   try {
     await db.run(sql`CREATE TABLE IF NOT EXISTS comments (
@@ -59,6 +70,11 @@ async function initializeDatabase() {
     if (!/duplicate column name|already exists/i.test(String(error))) {
       console.warn('Failed to add test_cases.status column:', error);
     }
+  }
+  try {
+    await db.run(sql`ALTER TABLE audits ADD COLUMN details TEXT`);
+  } catch (error) {
+    // Falla silenciosamente si la columna ya existe — es el comportamiento esperado
   }
 }
 

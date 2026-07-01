@@ -2,7 +2,7 @@
   import { ArrowLeft, Save, Trash2 } from "lucide-svelte";
   import { enhance } from "$app/forms";
   import Comments from "$lib/components/Comments.svelte";
-
+  import AuditTrail from "$lib/components/AuditTrail.svelte";
   let { data } = $props();
 </script>
 
@@ -109,5 +109,6 @@
       </button>
     </div>
   </form>
+  <AuditTrail refId={data.bug.id} refTable="bugs" />
   <Comments refId={data.bug.id} refTable="bugs" />
 </div>

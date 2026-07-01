@@ -1,6 +1,7 @@
 import { moduleRepository } from '$lib/server/repositories/modules';
 import { testCaseRepository } from '$lib/server/repositories/testCases';
 import { redirect } from '@sveltejs/kit';
+import { logAudit } from '$lib/server/audit.js';
 
 export const load = async ({ url }) => {
   const modules = await moduleRepository.getAll();
@@ -12,7 +13,7 @@ export const load = async ({ url }) => {
 };
 
 export const actions = {
-  default: async ({ request }) => {
+  default: async ({ request, locals }) => {
     const data = await request.formData();
     const title = /** @type {string} */ (data.get('title'));
     const moduleId = parseInt(/** @type {string} */ (data.get('moduleId')));
@@ -32,7 +33,7 @@ export const actions = {
     const steps = stepsJson ? JSON.parse(stepsJson) : [];
     const actors = actorsJson ? JSON.parse(actorsJson) : [];
 
-    await testCaseRepository.create({
+    const testCase = await testCaseRepository.create({
       title,
       moduleId,
       description,
@@ -42,6 +43,25 @@ export const actions = {
       status,
       steps,
       actors
+    });
+
+    await logAudit({
+      locals,
+      action: 'created',
+      refTable: 'test_cases',
+      refId: testCase.id,
+      before: null,
+      after: {
+        title,
+        moduleId,
+        description,
+        preconditions,
+        postconditions,
+        expectedResult,
+        status,
+        steps,
+        actors
+      }
     });
 
     throw redirect(303, `/modules/${moduleId}`);
