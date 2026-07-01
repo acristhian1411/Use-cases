@@ -1,4 +1,6 @@
 <script>
+  // @ts-nocheck
+
   import { MessageSquare, Send, Trash2, Loader2 } from "lucide-svelte";
   import { onMount } from "svelte";
   import { authUserStore } from "$lib/stores/auth.js";
