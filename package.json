@@ -10,7 +10,8 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
-		"start": "node build/index.js"
+		"start": "node build/index.js",
+		"test": "vitest run"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^7.0.0",
@@ -19,12 +20,15 @@
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
 		"autoprefixer": "^10.4.18",
 		"drizzle-kit": "^0.20.14",
+		"fast-check": "^4.8.0",
+		"js-yaml": "^5.2.0",
 		"postcss": "^8.4.35",
 		"svelte": "^5.43.8",
 		"svelte-check": "^4.3.4",
 		"tailwindcss": "^3.4.1",
 		"typescript": "^5.9.3",
-		"vite": "^7.2.2"
+		"vite": "^7.2.2",
+		"vitest": "^4.1.9"
 	},
 	"dependencies": {
 		"@libsql/client": "^0.6.0",

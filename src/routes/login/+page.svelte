@@ -69,7 +69,6 @@
         Email
         <input
           bind:value={email}
-          type="email"
           required
           class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-indigo-400"
           placeholder="usuario@empresa.com"

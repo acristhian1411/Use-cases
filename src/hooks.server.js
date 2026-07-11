@@ -4,15 +4,33 @@ import { userRepository } from '$lib/server/repositories/users.js';
 const publicRoutes = ['/', '/login', '/api/auth/login', '/api/auth/me'];
 
 export async function handle({ event, resolve }) {
-  const token = event.cookies.get('auth_token') || event.request.headers.get('authorization');
+  const cookieToken = event.cookies.get('auth_token');
+  const authHeader = event.request.headers.get('authorization');
+  const bearerToken = authHeader?.toLowerCase().startsWith('bearer ')
+    ? authHeader.slice(7).trim()
+    : null;
+  const token = cookieToken || bearerToken;
   const isPublicRoute = publicRoutes.includes(event.url.pathname);
 
   if (!token && !isPublicRoute) {
     throw redirect(302, '/login');
   }
+
   if (token) {
-    const externalUser = await getUserFromToken(token);
-    event.locals.user = externalUser ? await resolveLocalUser(externalUser) : null;
+    try {
+      const externalUser = await getUserFromToken(token);
+      event.locals.user = externalUser ? await resolveLocalUser(externalUser) : null;
+    } catch {
+      event.locals.user = null;
+
+      if (cookieToken) {
+        event.cookies.delete('auth_token', { path: '/' });
+      }
+
+      if (!isPublicRoute) {
+        throw redirect(302, '/login');
+      }
+    }
   } else {
     event.locals.user = null;
   }
