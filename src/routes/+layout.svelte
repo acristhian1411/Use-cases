@@ -2,7 +2,14 @@
   import "../app.css";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
-  import { BookOpen, Bug, FlaskConical, Home, LogOut } from "lucide-svelte";
+  import {
+    BookOpen,
+    Bug,
+    Camera,
+    FlaskConical,
+    Home,
+    LogOut,
+  } from "lucide-svelte";
   import { authUserStore, clearAuthUser } from "$lib/stores/auth.js";
   import { onMount } from "svelte";
 
@@ -13,6 +20,7 @@
     { href: "/modules", label: "Modules", icon: BookOpen },
     { href: "/tests", label: "Test Cases", icon: FlaskConical },
     { href: "/bugs", label: "Bugs", icon: Bug },
+    { href: "/recordings", label: "Recordings", icon: Camera },
   ];
 
   onMount(() => {
