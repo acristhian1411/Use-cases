@@ -78,3 +78,33 @@ export const audits = sqliteTable('audits', {
   details: text('details'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull()
 });
+
+export const extensionTokens = sqliteTable('extension_tokens', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	userId: integer('user_id').references(() => users.id).notNull(),
+	// Guardamos un hash (sha256) del token, nunca el token en texto plano
+	tokenHash: text('token_hash', { length: 64 }).notNull().unique(),
+	label: text('label', { length: 100 }), // ej: "Chrome - Windows 11 - office-pc"
+	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+	lastUsedAt: integer('last_used_at', { mode: 'timestamp' }),
+	revokedAt: integer('revoked_at', { mode: 'timestamp' })
+});
+
+/** Grabaciones de pantalla + consola + red, asociadas opcionalmente a un test_case o bug */
+export const recordings = sqliteTable('recordings', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	title: text('title', { length: 150 }),
+	status: text('status', { length: 20 }).default('recording').notNull(), // recording | processing | completed | failed
+	filePath: text('file_path', { length: 255 }), // ruta relativa dentro del volumen de grabaciones
+	mimeType: text('mime_type', { length: 50 }),
+	durationMs: integer('duration_ms'),
+	fileSizeBytes: integer('file_size_bytes'),
+	consoleLogPath: text('console_log_path', { length: 255 }), // JSONL, uno por línea, para no cargar todo en memoria
+	networkLogPath: text('network_log_path', { length: 255 }),
+	// Polimórfico: refTable = 'test_cases' | 'bugs' | null (sin asociar todavía)
+	refTable: text('ref_table', { length: 20 }),
+	refId: integer('ref_id'),
+	recordedById: integer('recorded_by_id').references(() => users.id).notNull(),
+	createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+	finishedAt: integer('finished_at', { mode: 'timestamp' })
+});

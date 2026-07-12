@@ -65,6 +65,42 @@ async function initializeDatabase() {
   }
 
   try {
+    await db.run(sql`CREATE TABLE IF NOT EXISTS extension_tokens (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      token_hash TEXT NOT NULL UNIQUE,
+      label TEXT,
+      created_at INTEGER NOT NULL,
+      last_used_at INTEGER,
+      revoked_at INTEGER
+    )`);
+  } catch (error) {
+    console.warn('Failed to initialize extension_tokens table:', error);
+  }
+
+  try {
+    await db.run(sql`CREATE TABLE IF NOT EXISTS recordings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      recorded_by_id INTEGER NOT NULL REFERENCES users(id),
+      file_path TEXT NOT NULL,
+      title TEXT,
+      mime_type TEXT,
+      ref_table TEXT,
+      ref_id INTEGER,
+      duration_ms INTEGER,
+      file_size_bytes INTEGER,
+      network_log_path TEXT,
+      console_log_path TEXT,
+      status TEXT NOT NULL DEFAULT 'recording',
+      created_at INTEGER NOT NULL,
+      finished_at INTEGER,
+      canceled_at INTEGER
+    )`);
+  } catch (error) {
+    console.warn('Failed to initialize recordings table:', error);
+  }
+
+  try {
     await db.run(sql`ALTER TABLE test_cases ADD COLUMN status TEXT NOT NULL DEFAULT 'untested'`);
   } catch (error) {
     if (!/duplicate column name|already exists/i.test(String(error))) {
