@@ -3,6 +3,7 @@
   import { enhance } from "$app/forms";
   import Comments from "$lib/components/Comments.svelte";
   import AuditTrail from "$lib/components/AuditTrail.svelte";
+  import { page } from "$app/stores";
 
   /** @type {{ data: { testCase: { id: number, title: string, description: string, moduleId: number, preconditions: string, postconditions: string, expectedResult: string, status?: string, steps: Array<any>, actors: Array<any> }, modules: Array<{ id: number, name: string }> } }} */
   let { data } = $props();
@@ -10,6 +11,13 @@
   let steps = $state(data.testCase.steps || []);
   let actors = $state(data.testCase.actors || []);
   let selectedModuleId = $state(data.testCase.moduleId);
+  let backHref = $derived(
+    $page.url.searchParams.get("from") === "tests"
+      ? "/tests"
+      : $page.url.searchParams.get("from")?.match(/^modules\/\d+$/)
+        ? `/${$page.url.searchParams.get("from")}`
+        : `/modules/${selectedModuleId}`,
+  );
 
   function addStep() {
     steps = [
@@ -44,7 +52,7 @@
   <div class="flex items-center justify-between gap-4">
     <div class="flex items-center gap-4">
       <a
-        href={`/modules/${selectedModuleId}`}
+        href={backHref}
         class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
       >
         <ArrowLeft size={20} />

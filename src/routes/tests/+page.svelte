@@ -50,7 +50,7 @@
     <div class="grid gap-3">
         {#each filteredTestCases as testCase}
             <a
-                href="/tests/{testCase.id}"
+                href="/tests/{testCase.id}?from=tests"
                 class="group flex items-center justify-between p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-indigo-500/50 hover:bg-slate-800/50 transition-all duration-200"
             >
                 <div class="flex items-center gap-4">
