@@ -1,17 +1,23 @@
 <script>
   import { ArrowLeft, Trash2 } from "lucide-svelte";
   import { enhance } from "$app/forms";
+  import { page } from "$app/stores";
   import BugForm from "$lib/components/BugForm.svelte";
   import Comments from "$lib/components/Comments.svelte";
   import AuditTrail from "$lib/components/AuditTrail.svelte";
   let { data } = $props();
+  let backHref = $derived(
+    $page.url.searchParams.get("from") === "bugs"
+      ? `/bugs${$page.url.search ? $page.url.search : ""}`
+      : "/bugs",
+  );
 </script>
 
 <div class="max-w-3xl mx-auto space-y-6 pb-20">
   <div class="flex items-center justify-between gap-4">
     <div class="flex items-center gap-4">
       <a
-        href="/bugs"
+        href={backHref}
         class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
       >
         <ArrowLeft size={20} />

@@ -1,11 +1,22 @@
 <script>
   import { Bug, Plus, Search } from "lucide-svelte";
+  import { page } from "$app/stores";
 
   let { data } = $props();
-  let searchTerm = $state("");
-  let selectedStatus = $state("all");
-  let selectedSeverity = $state("all");
-  let selectedModule = $state("all");
+  let searchTerm = $state($page.url.searchParams.get("search") || "");
+  let selectedStatus = $state($page.url.searchParams.get("status") || "all");
+  let selectedSeverity = $state($page.url.searchParams.get("severity") || "all");
+  let selectedModule = $state($page.url.searchParams.get("module") || "all");
+
+  /** @param {number} id */
+  function getEditHref(id) {
+    const params = new URLSearchParams({ from: "bugs" });
+    if (searchTerm) params.set("search", searchTerm);
+    if (selectedStatus !== "all") params.set("status", selectedStatus);
+    if (selectedSeverity !== "all") params.set("severity", selectedSeverity);
+    if (selectedModule !== "all") params.set("module", selectedModule);
+    return `/bugs/${id}?${params}`;
+  }
 
   let filteredBugs = $derived(
     data.bugs.filter((bug) => {
@@ -43,7 +54,7 @@
     </a>
   </div>
 
-  <div class="grid gap-3 md:grid-cols-4">
+  <div class="grid gap-3 md:grid-cols-5">
     <div class="relative md:col-span-2">
       <Search
         size={18}
@@ -75,6 +86,16 @@
       <option value="medium">Medium</option>
       <option value="high">High</option>
       <option value="critical">Critical</option>
+    </select>
+    <select
+      bind:value={selectedModule}
+      aria-label="Filter by module"
+      class="px-3 py-2 bg-slate-900/50 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-red-500"
+    >
+      <option value="all">All modules</option>
+      {#each data.modules as module}
+        <option value={module.name}>{module.name}</option>
+      {/each}
     </select>
   </div>
 
@@ -116,7 +137,7 @@
           </div>
           <div class="flex items-center gap-2">
             <a
-              href={`/bugs/${bug.id}`}
+              href={getEditHref(bug.id)}
               class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 transition-colors"
               >Edit</a
             >

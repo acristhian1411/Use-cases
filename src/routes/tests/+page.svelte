@@ -1,17 +1,20 @@
 <script>
     import { Plus, FlaskConical, ChevronRight, Search } from "lucide-svelte";
+    import { page } from "$app/stores";
 
     let { data } = $props();
     let searchTerm = $state("");
+    let selectedStatus = $state($page.url.searchParams.get("status") || "all");
 
     let filteredTestCases = $derived(
         data.testCases.filter(
             (tc) =>
-                tc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                (tc.moduleName &&
-                    tc.moduleName
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase())),
+                (tc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    (tc.moduleName &&
+                        tc.moduleName
+                            .toLowerCase()
+                            .includes(searchTerm.toLowerCase()))) &&
+                (selectedStatus === "all" || tc.status === selectedStatus),
         ),
     );
 </script>
@@ -33,24 +36,36 @@
         </a>
     </div>
 
-    <!-- Search -->
-    <div class="relative">
-        <Search
-            size={20}
-            class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
-        />
-        <input
-            type="text"
-            bind:value={searchTerm}
-            placeholder="Search test cases..."
-            class="w-full pl-10 pr-4 py-2 bg-slate-900/50 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
-        />
+    <div class="grid gap-3 md:grid-cols-[1fr_220px]">
+        <div class="relative">
+            <Search
+                size={20}
+                class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+            />
+            <input
+                type="text"
+                bind:value={searchTerm}
+                placeholder="Search test cases..."
+                class="w-full pl-10 pr-4 py-2 bg-slate-900/50 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+            />
+        </div>
+        <select
+            bind:value={selectedStatus}
+            aria-label="Filter by status"
+            class="px-3 py-2 bg-slate-900/50 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-indigo-500"
+        >
+            <option value="all">All statuses</option>
+            <option value="untested">Untested</option>
+            <option value="passed">Passed</option>
+            <option value="failed">Failed</option>
+            <option value="blocked">Blocked</option>
+        </select>
     </div>
 
     <div class="grid gap-3">
         {#each filteredTestCases as testCase}
             <a
-                href="/tests/{testCase.id}?from=tests"
+                href={`/tests/${testCase.id}?from=tests&status=${selectedStatus}`}
                 class="group flex items-center justify-between p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-indigo-500/50 hover:bg-slate-800/50 transition-all duration-200"
             >
                 <div class="flex items-center gap-4">

@@ -19,7 +19,7 @@ export const load = async ({ params }) => {
 };
 
 export const actions = {
-  update: async ({ request, params, locals }) => {
+  update: async ({ request, params, locals, url }) => {
     const id = parseInt(params.id);
     const data = await request.formData();
     const title = /** @type {string} */ (data.get('title'));
@@ -51,7 +51,7 @@ export const actions = {
       after: changes
     });
 
-    throw redirect(303, '/bugs');
+    throw redirect(303, `/bugs${url.search}`);
   },
 
   delete: async ({ params, locals }) => {

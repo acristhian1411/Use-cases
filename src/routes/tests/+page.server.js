@@ -7,6 +7,7 @@ export const load = async () => {
     id: testCases.id,
     title: testCases.title,
     description: testCases.description,
+    status: testCases.status,
     moduleName: modules.name,
     moduleId: modules.id
   })

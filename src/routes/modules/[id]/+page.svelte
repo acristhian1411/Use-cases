@@ -7,8 +7,16 @@
         Pencil,
         Trash2,
     } from "lucide-svelte";
+    import { page } from "$app/stores";
 
     let { data } = $props();
+    let selectedStatus = $state($page.url.searchParams.get("status") || "all");
+    let filteredTestCases = $derived(
+        data.testCases.filter(
+            (testCase) =>
+                selectedStatus === "all" || testCase.status === selectedStatus,
+        ),
+    );
 </script>
 
 <div class="space-y-8">
@@ -62,10 +70,22 @@
             </a>
         </div>
 
+        <select
+            bind:value={selectedStatus}
+            aria-label="Filter by status"
+            class="w-full px-3 py-2 bg-slate-900/50 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-indigo-500"
+        >
+            <option value="all">All statuses</option>
+            <option value="untested">Untested</option>
+            <option value="passed">Passed</option>
+            <option value="failed">Failed</option>
+            <option value="blocked">Blocked</option>
+        </select>
+
         <div class="grid gap-3">
-            {#each data.testCases as testCase}
+            {#each filteredTestCases as testCase}
                 <a
-                    href="/tests/{testCase.id}?from=modules/{data.module.id}"
+                    href={`/tests/${testCase.id}?from=modules/${data.module.id}&status=${selectedStatus}`}
                     class="group flex items-center justify-between p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-indigo-500/50 hover:bg-slate-800/50 transition-all duration-200"
                 >
                     <div class="flex items-center gap-4">

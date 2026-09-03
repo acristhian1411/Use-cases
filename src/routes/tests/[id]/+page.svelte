@@ -13,9 +13,9 @@
   let selectedModuleId = $state(data.testCase.moduleId);
   let backHref = $derived(
     $page.url.searchParams.get("from") === "tests"
-      ? "/tests"
+      ? `/tests${$page.url.searchParams.get("status") ? `?status=${$page.url.searchParams.get("status")}` : ""}`
       : $page.url.searchParams.get("from")?.match(/^modules\/\d+$/)
-        ? `/${$page.url.searchParams.get("from")}`
+        ? `/${$page.url.searchParams.get("from")}${$page.url.searchParams.get("status") ? `?status=${$page.url.searchParams.get("status")}` : ""}`
         : `/modules/${selectedModuleId}`,
   );
 
