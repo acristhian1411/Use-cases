@@ -1,4 +1,6 @@
 import { bugRepository } from '$lib/server/repositories/bugs';
+import { testCaseRepository } from '$lib/server/repositories/testCases';
+import { moduleRepository } from '$lib/server/repositories/modules';
 import { redirect, error } from '@sveltejs/kit';
 import { logAudit } from '$lib/server/audit.js';
 
@@ -10,7 +12,9 @@ export const load = async ({ params }) => {
   }
 
   return {
-    bug
+    bug,
+    modules: await moduleRepository.getAll(),
+    testCases: await testCaseRepository.getAll()
   };
 };
 
@@ -22,6 +26,7 @@ export const actions = {
     const description = /** @type {string} */ (data.get('description'));
     const severity = /** @type {string} */ (data.get('severity')) || 'medium';
     const status = /** @type {string} */ (data.get('status')) || 'open';
+    const testCaseId = data.get('testCaseId');
 
     if (!title || !description) {
       return { success: false, error: 'Title and description are required' };
@@ -31,9 +36,10 @@ export const actions = {
       title: /** @type {string} */ (data.get('title')),
       description: /** @type {string} */ (data.get('description')),
       severity: /** @type {string} */ (data.get('severity')) || 'medium',
-      status: /** @type {string} */ (data.get('status')) || 'open'
+      status: /** @type {string} */ (data.get('status')) || 'open',
+      testCaseId: testCaseId ? parseInt(/** @type {string} */ (testCaseId)) : null
     };
-    
+
     await bugRepository.update(id, changes);
 
     await logAudit({

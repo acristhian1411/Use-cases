@@ -1,6 +1,7 @@
 <script>
-  import { ArrowLeft, Save, Trash2 } from "lucide-svelte";
+  import { ArrowLeft, Trash2 } from "lucide-svelte";
   import { enhance } from "$app/forms";
+  import BugForm from "$lib/components/BugForm.svelte";
   import Comments from "$lib/components/Comments.svelte";
   import AuditTrail from "$lib/components/AuditTrail.svelte";
   let { data } = $props();
@@ -30,85 +31,13 @@
     </form>
   </div>
 
-  <form method="POST" action="?/update" use:enhance class="space-y-6">
-    <div
-      class="bg-slate-900/50 border border-slate-800 rounded-xl p-6 space-y-6"
-    >
-      <div class="grid gap-6 md:grid-cols-2">
-        <div class="space-y-2">
-          <label for="title" class="block text-sm font-medium text-slate-300"
-            >Title</label
-          >
-          <input
-            id="title"
-            name="title"
-            type="text"
-            required
-            value={data.bug.title}
-            class="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
-          />
-        </div>
-        <div class="space-y-2">
-          <label for="severity" class="block text-sm font-medium text-slate-300"
-            >Severity</label
-          >
-          <select
-            id="severity"
-            name="severity"
-            value={data.bug.severity}
-            class="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
-          >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-            <option value="critical">Critical</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="space-y-2">
-        <label
-          for="description"
-          class="block text-sm font-medium text-slate-300">Description</label
-        >
-        <textarea
-          id="description"
-          name="description"
-          rows="4"
-          required
-          value={data.bug.description}
-          class="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all resize-none"
-        ></textarea>
-      </div>
-
-      <div class="space-y-2">
-        <label for="status" class="block text-sm font-medium text-slate-300"
-          >Status</label
-        >
-        <select
-          id="status"
-          name="status"
-          value={data.bug.status}
-          class="w-full px-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
-        >
-          <option value="open">Open</option>
-          <option value="in_progress">In Progress</option>
-          <option value="fixed">Fixed</option>
-          <option value="closed">Closed</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="flex justify-end">
-      <button
-        type="submit"
-        class="flex items-center gap-2 px-8 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-medium transition-colors shadow-lg shadow-red-500/20"
-      >
-        <Save size={20} />
-        <span>Save Changes</span>
-      </button>
-    </div>
-  </form>
+  <BugForm
+    modules={data.modules}
+    testCases={data.testCases}
+    bug={data.bug}
+    action="?/update"
+    submitLabel="Save Changes"
+  />
   <AuditTrail refId={data.bug.id} refTable="bugs" />
   <Comments refId={data.bug.id} refTable="bugs" />
 </div>
