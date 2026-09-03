@@ -11,6 +11,23 @@
 
     let { data } = $props();
     let selectedStatus = $state($page.url.searchParams.get("status") || "all");
+    const statusStyles = {
+        untested: "bg-slate-500/10 text-slate-400 border-slate-500/20",
+        passed: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+        failed: "bg-rose-500/10 text-rose-400 border-rose-500/20",
+        blocked: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+    };
+
+    /** @param {string} status */
+    function statusStyle(status) {
+        return /** @type {Record<string, string>} */ (statusStyles)[status] || statusStyles.untested;
+    }
+
+    /** @param {string} status */
+    function statusLabel(status) {
+        return status.replace(/_/g, " ");
+    }
+
     let filteredTestCases = $derived(
         data.testCases.filter(
             (testCase) =>
@@ -102,9 +119,15 @@
                             >
                                 {testCase.title}
                             </h3>
-                            <p class="text-sm text-slate-500 line-clamp-1">
+                            <div class="flex items-center gap-2 text-sm text-slate-500">
+                                <span
+                                    class={`px-2 py-0.5 rounded-full border text-xs capitalize ${statusStyle(testCase.status)}`}
+                                    >{statusLabel(testCase.status)}</span
+                                >
+                                <p class="line-clamp-1">
                                 {testCase.description || "No description"}
-                            </p>
+                                </p>
+                            </div>
                         </div>
                     </div>
                     <div
