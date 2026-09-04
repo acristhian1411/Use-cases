@@ -8,8 +8,9 @@
         Trash2,
     } from "lucide-svelte";
     import { page } from "$app/stores";
+    import { enhance } from "$app/forms";
 
-    let { data } = $props();
+    let { data, form } = $props();
     let selectedStatus = $state($page.url.searchParams.get("status") || "all");
     const statusStyles = {
         untested: "bg-slate-500/10 text-slate-400 border-slate-500/20",
@@ -26,6 +27,21 @@
     /** @param {string} status */
     function statusLabel(status) {
         return status.replace(/_/g, " ");
+    }
+
+    /** @param {MouseEvent} event */
+    function handleDeleteClick(event) {
+        if (data.testCases.length > 0) {
+            event.preventDefault();
+            alert(
+                "This module cannot be deleted while it has associated test cases. Move or delete them first.",
+            );
+            return;
+        }
+
+        if (!confirm("Are you sure you want to delete this module?")) {
+            event.preventDefault();
+        }
     }
 
     let filteredTestCases = $derived(
@@ -55,20 +71,30 @@
                 </p>
             </div>
             <div class="flex gap-2">
-                <button
+                <a
+                    href="/modules/{data.module.id}/edit"
                     class="p-2 text-slate-400 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-colors"
                 >
                     <Pencil size={20} />
-                </button>
-                <button
-                    class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                >
-                    <Trash2 size={20} />
-                </button>
+                </a>
+                <form method="POST" action="?/delete" use:enhance>
+                    <button
+                        type="submit"
+                        title="Delete module"
+                        class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                        onclick={handleDeleteClick}
+                    >
+                        <Trash2 size={20} />
+                    </button>
+                </form>
             </div>
         </div>
     </div>
-
+    {#if form?.error}
+        <p class="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            {form.error}
+        </p>
+    {/if}
     <!-- Test Cases Section -->
     <div class="space-y-4">
         <div class="flex items-center justify-between">
